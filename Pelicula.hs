@@ -10,6 +10,15 @@ nuevaP n g a b = (P n (auxGenerosSinRepetidos g) (auxActoresSinRepetidos a) b)
 nombreP:: Pelicula -> Nombre
 nombreP (P n _ _ _) = n
 
+generosP:: Pelicula -> [Genero]
+generosP (P _ g _ _) = g
+
+actoresP:: Pelicula -> [Actor]
+actoresP (P _ _ a _) = a
+
+es3DP:: Pelicula -> Bool
+es3DP (P _ _ _ b) = b
+
 
 
 auxGenerosSinRepetidos:: [Genero] -> [Genero]
