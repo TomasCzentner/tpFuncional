@@ -19,7 +19,10 @@ actoresP (P _ _ as _) = as
 es3DP:: Pelicula -> Bool
 es3DP (P _ _ _ b) = b
 
-
+-- generarSagaDePeliculasP:: [Actor] -> [Genero] -> [Nombre] -> [Pelicula]
+-- generarSagaDePeliculasP as gs (n:ns) = (nuevaP n as gs False):generarSagaDePeliculasP as gs ns
+-- ganerarSagaDePeliculasP [] = []
+-- Ver que poner con respecto a el bool 3D
 
 auxGenerosSinRepetidos:: [Genero] -> [Genero]
 auxGenerosSinRepetidos [] = []
