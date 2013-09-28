@@ -18,13 +18,11 @@ actoresP (P _ _ as _) = as
 
 es3DP:: Pelicula -> Bool
 es3DP (P _ _ _ b) = b
-
--- generarSagaDePeliculasP:: [Actor] -> [Genero] -> [Nombre] -> [Pelicula]
--- generarSagaDePeliculasP as gs (n:ns) = (nuevaP n as gs False):generarSagaDePeliculasP as gs ns
--- ganerarSagaDePeliculasP [] = []
--- Ver que poner con respecto a el bool 3D
-
-
+ 
+generarSagaDePeliculasP:: [Actor] -> [Genero] -> [Nombre] -> [Pelicula]
+generarSagaDePeliculasP _ _ [] = []
+generarSagaDePeliculasP as gs (n:ns) = (nuevaP n gs as False):(generarSagaDePeliculasP as gs ns)
+-- Ver que poner con respecto   el bool 3D
 
 auxGenerosSinRepetidos:: [Genero] -> [Genero]
 auxGenerosSinRepetidos [] = []
@@ -39,6 +37,7 @@ auxActoresSinRepetidos (x:xs) 	| (elem x xs) = auxActoresSinRepetidos xs
 n1 = "LOTR I"
 n2 = "LOTR II"
 n3 = "LOTR III"
+ns = ["LOTR I", "LOTR II", "LOTR III"]
 p1 = nuevaP n1 [Aventura] as1 False
 as1 = ["Orlando Bloom","Vigo Mortensein","Ian McKellen"]							
 as = ["Robert", "Soy", "No", "Soy", "Hola", "Pedro", "Soy"]
