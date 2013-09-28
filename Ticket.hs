@@ -1,4 +1,4 @@
-module Ticket (Ticket, nuevoT{-, salaT, peliculaT, usadoT, usarT, peliculaMenosVistaT, todosLosTicketsParaLaMismaSalaT, cambiarSalaT-}) 	where
+module Ticket (Ticket, nuevoT, salaT, peliculaT, usadoT, usarT{-, peliculaMenosVistaT, todosLosTicketsParaLaMismaSalaT, cambiarSalaT-}) 	where
 
 import Tipos
 import Pelicula
@@ -37,8 +37,3 @@ apariciones a [] = 0
 
 aparicionesPelis::Pelicula->[Ticket]->Int
 aparicionesPelis p ()-}
-
-s1 = ['a','b','c','a']
-
-t1 = nuevoT p1 5 True
-t2 = nuevoT p1 6 False
