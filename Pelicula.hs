@@ -1,4 +1,4 @@
-module Pelicula (Pelicula, nuevaP, nombreP, generosP, actoresP, es3DP, p1 {-, agruparPelisPorGeneroP, generarSagaDePeliculasP-}) where
+module Pelicula (Pelicula, nuevaP, nombreP, generosP, actoresP, es3DP, agruparPelisPorGeneroP,{- generarSagaDePeliculasP-}) where
 
 import Tipos
 
@@ -18,9 +18,29 @@ actoresP (P _ _ as _) = as
 
 es3DP:: Pelicula -> Bool
 es3DP (P _ _ _ b) = b
+ 
+generarSagaDePeliculasP:: [Actor] -> [Genero] -> [Nombre] -> [Pelicula]
+generarSagaDePeliculasP _ _ [] = []
+generarSagaDePeliculasP as gs (n:ns) = (nuevaP n gs as False):(generarSagaDePeliculasP as gs ns)
+-- Ver que poner con respecto   el bool 3D
+
+--Intentar hacerlo más lindo
+agruparPelisPorGeneroP:: [Pelicula] -> [(Genero, [Pelicula])]
+agruparPelisPorGeneroP ps = agruparPelisPorGenero2 ps (auxGenerosSinRepetidos (auxGenerosDePelis ps))
 
 
+agruparPelisPorGenero2:: [Pelicula] -> [Genero] ->[(Genero, [Pelicula])]
+agruparPelisPorGenero2 _ [] = []
+agruparPelisPorGenero2 ps (g:gs) = (g, (auxPelisDeGenero ps g)):(agruparPelisPorGenero2 ps gs)
 
+auxGenerosDePelis:: [Pelicula] -> [Genero]
+auxGenerosDePelis [] = []
+auxGenerosDePelis (x:xs) = (generosP x) ++ (auxGenerosDePelis xs)
+
+auxPelisDeGenero:: [Pelicula] -> Genero -> [Pelicula]
+auxPelisDeGenero [] _ = []
+auxPelisDeGenero (x:xs) g 	| (elem g (generosP x)) = x: (auxPelisDeGenero xs g)
+							| otherwise = auxPelisDeGenero xs g
 
 
 auxGenerosSinRepetidos:: [Genero] -> [Genero]
@@ -32,11 +52,14 @@ auxActoresSinRepetidos:: [Actor] -> [Actor]
 auxActoresSinRepetidos [] = []
 auxActoresSinRepetidos (x:xs) 	| (elem x xs) = auxActoresSinRepetidos xs
 								| otherwise = x:(auxActoresSinRepetidos xs)
-
-n1 = "LOTR I"
-n2 = "LOTR II"
-n3 = "LOTR III"
-p1 = nuevaP n1 [Aventura] as1 False
-as1 = ["Orlando Bloom","Vigo Mortensein","Ian McKellen"]							
-as = ["Robert", "Soy", "No", "Soy", "Hola", "Pedro", "Soy"]
-gs = [Aventura, Comedia, Drama, Aventura, Comedia, Comedia]
+										
+tst_acts = ["Robert", "Jamie", "Leonard", "Jamie", "Robert", "Pedro", "Jane"]
+tst_acts2 = ["Hey"]
+tst_grs = [Aventura, Comedia, Drama]
+tst_grs2 = [Terror, Comedia]
+tst_grs3= [Drama, Aventura]
+tst_peli = nuevaP "Nuevap" tst_grs tst_acts2 True
+tst_peli2 = nuevaP "ADSA" tst_grs2 tst_acts2 False
+tst_peli3 = nuevaP "La pelicula" tst_grs3 tst_acts2 False
+tst_peli4 = nuevaP "La peli2" [] tst_acts2 False
+listadepelis = [tst_peli, tst_peli4, tst_peli3]
