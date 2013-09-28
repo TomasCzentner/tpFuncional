@@ -52,14 +52,3 @@ auxActoresSinRepetidos:: [Actor] -> [Actor]
 auxActoresSinRepetidos [] = []
 auxActoresSinRepetidos (x:xs) 	| (elem x xs) = auxActoresSinRepetidos xs
 								| otherwise = x:(auxActoresSinRepetidos xs)
-										
-tst_acts = ["Robert", "Jamie", "Leonard", "Jamie", "Robert", "Pedro", "Jane"]
-tst_acts2 = ["Hey"]
-tst_grs = [Aventura, Comedia, Drama]
-tst_grs2 = [Terror, Comedia]
-tst_grs3= [Drama, Aventura]
-tst_peli = nuevaP "Nuevap" tst_grs tst_acts2 True
-tst_peli2 = nuevaP "ADSA" tst_grs2 tst_acts2 False
-tst_peli3 = nuevaP "La pelicula" tst_grs3 tst_acts2 False
-tst_peli4 = nuevaP "La peli2" [] tst_acts2 False
-listadepelis = [tst_peli, tst_peli4, tst_peli3]
