@@ -7,6 +7,8 @@ data Pelicula = P Nombre [Genero] [Actor] Bool deriving (Show, Eq)
 nuevaP:: Nombre -> [Genero] -> [Actor] -> Bool -> Pelicula
 nuevaP n g a b = (P n (auxGenerosSinRepetidos g) (auxActoresSinRepetidos a) b)
 
+nombreP:: Pelicula -> Nombre
+nombreP (P n _ _ _) = n
 
 
 auxGenerosSinRepetidos:: [Genero] -> [Genero]
