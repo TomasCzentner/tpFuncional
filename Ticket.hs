@@ -1,4 +1,4 @@
-module Ticket (Ticket, nuevoT, salaT, peliculaT, usadoT, usarT{-, peliculaMenosVistaT, todosLosTicketsParaLaMismaSalaT, cambiarSalaT-}) 	where
+module Ticket (Ticket, nuevoT, salaT, peliculaT, usadoT, usarT, peliculaMenosVistaT, todosLosTicketsParaLaMismaSalaT, cambiarSalaT) 	where
 
 import Tipos
 import Pelicula
@@ -25,15 +25,28 @@ usarT::Ticket->Ticket
 usarT (TicketSinUsar s p) = (TicketUsado (TicketSinUsar s p))
 usarT (TicketUsado t1) 	  = t1
 
-{-peliculaMenosVistaT::[Ticket]->Pelicula
-peliculaMenosVista [(TicketSinUsar s p)] = p 
-peliculaMenosVistaT ((TicketSinUsar s p):ts) = 
-peliculaMenosVistaT ((TicketUsado(TicketSinUsar(s p)))):ts) =
+peliculaMenosVistaT::[Ticket]->Pelicula
+peliculaMenosVistaT [t1] = peliculaT t1
+peliculaMenosVistaT [t1,t2] = peliculaT t1
+peliculaMenosVistaT (x:y:ts) | aparicionesPelicula (peliculaT x) (peliculasTs (x:y:ts)) <= aparicionesPelicula (peliculaT y) (peliculasTs (y:ts)) = peliculaT x
+			   			   	 | otherwise = peliculaMenosVistaT (y:ts)
 
-apariciones::Char->[Char]->Int
-apariciones a (b:as) | a == b = 1 + apariciones a as
-					 | otherwise = apariciones a as
-apariciones a [] = 0
+peliculasTs::[Ticket]->[Pelicula]
+peliculasTs [t1] = [(peliculaT t1)]
+peliculasTs (t:ts) = (peliculaT t):(peliculasTs ts)
 
-aparicionesPelis::Pelicula->[Ticket]->Int
-aparicionesPelis p ()-}
+aparicionesPelicula::Pelicula->[Pelicula]->Int
+aparicionesPelicula p1 [] = 0
+aparicionesPelicula p1 (p:ps) | p1 == p = 1 + aparicionesPelicula p1 ps
+					  		  | otherwise = aparicionesPelicula p1 ps
+
+todosLosTicketsParaLaMismaSalaT::[Ticket]->Bool
+todosLosTicketsParaLaMismaSalaT [] = True
+todosLosTicketsParaLaMismaSalaT [t] = True
+todosLosTicketsParaLaMismaSalaT (x:y:ts) = salaT x == salaT y && todosLosTicketsParaLaMismaSalaT ts
+
+cambiarSalaT::[Ticket]->Int->Int->[Ticket]
+cambiarSalaT [] vieja nueva = []
+cambiarSalaT (t:ts) vieja nueva | salaT t == vieja && usadoT t = (TicketUsado (TicketSinUsar nueva (peliculaT t))):(cambiarSalaT ts vieja nueva)
+						   | salaT t == vieja && (not (usadoT t)) = (TicketSinUsar nueva (peliculaT t)):(cambiarSalaT ts vieja nueva)
+						   | otherwise = t:(cambiarSalaT ts vieja nueva)
