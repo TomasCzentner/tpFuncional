@@ -9,6 +9,9 @@ data Cine = C Nombre |
 			SalaConPelicula Cine Sala Pelicula Int | 
 			TicketVendido Cine Ticket deriving (Show)
 
+nuevoC:: Nombre -> Cine
+nuevoC n = (C n)
+
 nombreC:: Cine -> Nombre 
 nombreC (C x) = x 
 nombreC (SalaSinPelicula c _ ) = nombreC c 
@@ -20,3 +23,5 @@ peliculasC (C x) = []
 peliculasC (SalaSinPelicula c _ ) = peliculasC c 
 peliculasC (TicketVendido c _ ) = peliculasC c 
 peliculasC (SalaConPelicula c _ p _ ) = (p: (peliculasC c))
+
+n1 = "Cine"
