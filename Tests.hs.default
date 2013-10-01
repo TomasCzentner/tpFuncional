@@ -3,16 +3,19 @@ import Pelicula
 import Ticket
 import Cine
 
-tst_acts = ["Robert", "Jamie", "Leonard", "Jamie", "Robert", "Pedro", "Jane"]
-tst_acts2 = ["Hey"]
-tst_grs = [Aventura, Comedia, Drama]
-tst_grs2 = [Terror, Comedia]
-tst_grs3= [Drama, Aventura]
-tst_peli = nuevaP "Nuevap" tst_grs tst_acts2 True
-tst_peli2 = nuevaP "ADSA" tst_grs2 tst_acts2 False
-tst_peli3 = nuevaP "La pelicula" tst_grs3 tst_acts2 False
-tst_peli4 = nuevaP "La peli2" [] tst_acts2 False
-listadepelis = [tst_peli, tst_peli4, tst_peli3]
+actores1 = ["Elijah Wood","Orlando Bloom","Vigo Mortensein","Ian McKellen"]
+actores2 = ["Silvester Stallone","Jet Li","Jason Statham"]
 
-t1 = nuevoT tst_peli 5 True
-t2 = nuevoT tst_peli2 6 False
+generos1 = [Aventura, Drama]
+generos2 = [Aventura, Terror]
+
+nombre1 = "LOTRO"
+nombre2 = "The Expendables"
+
+pelicula1 = nuevaP nombre1 generos1 actores1 True
+pelicula2 = nuevaP nombre2 generos2 actores2 False
+
+t1 = nuevoT pelicula1 5 True
+t2 = nuevoT pelicula2 6 False
+t3 = nuevoT pelicula2 7 True
+t4 = nuevoT pelicula2 8 True
