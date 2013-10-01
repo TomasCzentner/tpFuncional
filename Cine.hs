@@ -1,4 +1,4 @@
-module Cine (nuevoC, nombreC, peliculasC, salasC, espectadores, salaC, ticketsVendidosC,  abrirSalaC, agregarPeliculaC,
+module Cine (nuevoC, nombreC, peliculasC, salasC, espectadoresC, salaC, ticketsVendidosC,  abrirSalaC, agregarPeliculaC,
 			 cerrarSalaC, cerrarSalasC, cerrarSalasDeLaCadenaC, peliculaC, venderTicketC, ingresarASalaC, pasarA3DUnaPeliculaC) where
 
 import Tipos
@@ -37,7 +37,7 @@ espectadoresC (SalaSinPelicula c s) sala = 0
 espectadoresC (SalaConPelicula c s _ i ) sala
 					| s == sala = i
 					| otherwise = espectadoresC c sala
-espectadoresC (TicketVendido c _ ) sala = espectadoresC c
+espectadoresC (TicketVendido c _ ) sala = espectadoresC c sala
 
 
 
@@ -49,7 +49,7 @@ salaC (TicketVendido c t) peli = salaC c peli
 
 
 ticketsVendidosC:: Cine -> [Ticket]
-ticketsVendidosC C x = []
+ticketsVendidosC (C x) = []
 ticketsVendidosC (SalaSinPelicula c _ ) = ticketsVendidosC c
 ticketsVendidosC (SalaConPelicula c _ _ _ ) = ticketsVendidosC c
 ticketsVendidosC (TicketVendido c t) = (t: ticketsVendidosC c)
