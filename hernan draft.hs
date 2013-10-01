@@ -73,6 +73,11 @@ cerrarSalaC:: Cine -> Sala -> Cine
 cerrarSalaC (SalaSinPelicula c s ) sala 
 										| s == sala = c
 										|otherwise =SalaSinPelicula (cerrarSalaC c sala ) s
+cerrarSalaC (TicketVendido c t ) sala = TicketVendido( cerrarSalaC c sala) t 
+cerrarSalaC (SalaConPelicula c s p i ) sala 
+											| (s == sala ) = c
+											|otherwise = SalaConPelicula (cerrarSalaC c sala ) s p i
+
 ----------------------------------------------------------------------
 cerrarSalasC:: Cine -> Int -> Cine
 cerrarSalasC (C n) _ = C n
