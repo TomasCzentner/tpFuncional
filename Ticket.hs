@@ -23,22 +23,31 @@ usadoT (TicketUsado (TicketSinUsar s p)) = True
 
 usarT::Ticket->Ticket
 usarT (TicketSinUsar s p) = (TicketUsado (TicketSinUsar s p))
-usarT (TicketUsado t1) 	  = t1
+usarT (TicketUsado t1) 	  = (TicketUsado t1)
 
-peliculaMenosVistaT::[Ticket]->Pelicula
-peliculaMenosVistaT [t1] = peliculaT t1
-peliculaMenosVistaT [t1,t2] = peliculaT t1
-peliculaMenosVistaT (x:y:ts) | aparicionesPelicula (peliculaT x) (peliculasTs (x:y:ts)) <= aparicionesPelicula (peliculaT y) (peliculasTs (y:ts)) = peliculaT x
-			   			   	 | otherwise = peliculaMenosVistaT (y:ts)
+peliculaMenosVistaT:: [Ticket] -> Pelicula
+peliculaMenosVistaT ts = auxMenosVista (peliculasTs ts) ts
+
+auxMenosVista:: [Pelicula] -> [Ticket] -> Pelicula
+auxMenosVista [p] _ = p
+auxMenosVista (a:b:ps) ts 	| (aparicionesPelicula a (peliculasTs (ticketsUsados ts))) 
+								< (aparicionesPelicula b (peliculasTs (ticketsUsados ts))) = a
+							| otherwise = auxMenosVista (b:ps) ts
 
 peliculasTs::[Ticket]->[Pelicula]
-peliculasTs [t1] = [(peliculaT t1)]
+peliculasTs [] = []
 peliculasTs (t:ts) = (peliculaT t):(peliculasTs ts)
 
+ticketsUsados:: [Ticket] -> [Ticket]
+ticketsUsados [] = []
+ticketsUsados ((TicketUsado t):ts) = (TicketUsado t):(ticketsUsados ts)
+ticketsUsados ((TicketSinUsar _ _):ts) = ticketsUsados ts
+
 aparicionesPelicula::Pelicula->[Pelicula]->Int
-aparicionesPelicula p1 [] = 0
-aparicionesPelicula p1 (p:ps) | p1 == p = 1 + aparicionesPelicula p1 ps
-					  		  | otherwise = aparicionesPelicula p1 ps
+aparicionesPelicula peli [] = 0
+aparicionesPelicula peli (p:ps) | p == peli = 1 + aparicionesPelicula peli ps
+					  		  	| otherwise = aparicionesPelicula peli ps
+
 
 todosLosTicketsParaLaMismaSalaT::[Ticket]->Bool
 todosLosTicketsParaLaMismaSalaT [] = True
@@ -50,3 +59,4 @@ cambiarSalaT [] vieja nueva = []
 cambiarSalaT (t:ts) vieja nueva | salaT t == vieja && usadoT t = (TicketUsado (TicketSinUsar nueva (peliculaT t))):(cambiarSalaT ts vieja nueva)
 						   | salaT t == vieja && (not (usadoT t)) = (TicketSinUsar nueva (peliculaT t)):(cambiarSalaT ts vieja nueva)
 						   | otherwise = t:(cambiarSalaT ts vieja nueva)
+						   

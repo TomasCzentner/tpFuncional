@@ -1,3 +1,5 @@
+--Hay algunos casos "base" que fueron agregados, porque los tests se quejaban de su nula existencia
+
 module Cine (nuevoC, nombreC, peliculasC, salasC, espectadoresC, salaC, ticketsVendidosC,  abrirSalaC, agregarPeliculaC,
 			 cerrarSalaC, cerrarSalasC, cerrarSalasDeLaCadenaC, peliculaC, venderTicketC, ingresarASalaC, pasarA3DUnaPeliculaC) where
 
@@ -22,9 +24,8 @@ nombreC (TicketVendido c _ ) = nombreC c
 peliculasC:: Cine -> [Pelicula] 
 peliculasC (C x) = [] 
 peliculasC (SalaSinPelicula c _ ) = peliculasC c 
-peliculasC (SalaConPelicula c _ p _ ) = (p: (peliculasC c))
 peliculasC (TicketVendido c _ ) = peliculasC c 
-
+peliculasC (SalaConPelicula c _ p _ ) = (p: (peliculasC c))
 
 salasC:: Cine -> [Sala]
 salasC (C x) = []
@@ -32,21 +33,23 @@ salasC (SalaSinPelicula c s) = (s: (salasC c))
 salasC (SalaConPelicula c s _ _) = (s: (salasC c ))
 salasC (TicketVendido c _ ) = salasC c
 
-espectadoresC:: Cine -> Sala -> Int 
+espectadoresC:: Cine -> Sala -> Int
+espectadoresC (C n) s = 0
 espectadoresC (SalaSinPelicula c s) sala = 0
+espectadoresC (TicketVendido c _ ) s = espectadoresC c s
 espectadoresC (SalaConPelicula c s _ i ) sala
 					| s == sala = i
-					| otherwise = espectadoresC c sala
-espectadoresC (TicketVendido c _ ) sala = espectadoresC c sala
+					| otherwise = espectadoresC c s
 
 
 
 salaC::Cine-> Pelicula -> Sala
+salaC (C n) p = 0
+salaC (SalaSinPelicula c s) peli = salaC c peli
+salaC (TicketVendido c t) peli = salaC c peli
 salaC (SalaConPelicula c s p _ ) peli 
 									| p == peli = s
 									|otherwise = salaC c peli
-salaC (TicketVendido c t) peli = salaC c peli
-
 
 ticketsVendidosC:: Cine -> [Ticket]
 ticketsVendidosC (C x) = []
@@ -56,76 +59,84 @@ ticketsVendidosC (TicketVendido c t) = (t: ticketsVendidosC c)
 
 abrirSalaC:: Cine -> Sala -> Cine
 abrirSalaC (C n ) sala = SalaSinPelicula (C n) sala
-abrirSalaC (SalaSinPelicula c s) sala = SalaSinPelicula (abrirSalaC c sala) s
-abrirSalaC (SalaConPelicula c s p i ) sala = SalaConPelicula (abrirSalaC c sala) s p i
+abrirSalaC (SalaSinPelicula c s) sala 
+										| s == sala = error "Error"
+										| otherwise = SalaSinPelicula (abrirSalaC c sala) s
+abrirSalaC (SalaConPelicula c s p i ) sala 
+										| s == sala = error "Error"
+										| otherwise = SalaConPelicula (abrirSalaC c sala) s p i
 abrirSalaC (TicketVendido c t) sala = TicketVendido (abrirSalaC c sala) t
 
+
 agregarPeliculaC:: Cine -> Pelicula -> Sala -> Cine
+agregarPeliculaC (C n) _ _ = (C n)
 agregarPeliculaC (SalaSinPelicula c s ) p sala 
 											| sala == s = (SalaConPelicula c sala p 0)
-											|otherwise = SalaSinPelicula (agregarPeliculaC c p sala) s
+											| otherwise = SalaSinPelicula (agregarPeliculaC c p sala) s
 agregarPeliculaC (SalaConPelicula c s pe i ) p sala = SalaConPelicula (agregarPeliculaC c p sala) s pe i
 agregarPeliculaC (TicketVendido c t) p sala = TicketVendido (agregarPeliculaC c p sala) t
+
 
 cerrarSalaC:: Cine -> Sala -> Cine
 cerrarSalaC (SalaSinPelicula c s ) sala 
 										| s == sala = c
 										|otherwise =SalaSinPelicula (cerrarSalaC c sala ) s
+cerrarSalaC (TicketVendido c t ) sala = TicketVendido( cerrarSalaC c sala) t 
 cerrarSalaC (SalaConPelicula c s p i ) sala 
-											| s == sala  = c
+											| (s == sala ) = c
 											|otherwise = SalaConPelicula (cerrarSalaC c sala ) s p i
-cerrarSalaC (TicketVendido c t ) sala = TicketVendido ( cerrarSalaC c sala) t 
 
 ----------------------------------------------------------------------
 cerrarSalasC:: Cine -> Int -> Cine
 cerrarSalasC (C n) _ = C n
+cerrarSalasC (TicketVendido c t ) e = TicketVendido (cerrarSalasC c e) t 
 cerrarSalasC (SalaSinPelicula c s ) e = cerrarSalasC c e 
 cerrarSalasC (SalaConPelicula c s p i ) e 
 											| i < e =  cerrarSalasC c e 
 											| otherwise = SalaConPelicula (cerrarSalasC c e) s p i
-cerrarSalasC (TicketVendido c t ) e = TicketVendido (cerrarSalasC c e) t 
 
 cerrarSalasDeLaCadenaC:: [Cine] -> Int -> [Cine]
 cerrarSalasDeLaCadenaC [] e = []
 cerrarSalasDeLaCadenaC (c:cs) e = ((cerrarSalasC c e): (cerrarSalasDeLaCadenaC cs e )) 
 
 peliculaC:: Cine -> Sala -> Pelicula
+peliculaC (TicketVendido c t ) sala = peliculaC c sala 
 peliculaC (SalaConPelicula c s p i ) sala 
 											| s == sala = p
 											|otherwise = peliculaC c sala 
-peliculaC (TicketVendido c t ) sala = peliculaC c sala 
 
 venderTicketC :: Cine -> Pelicula -> (Cine, Ticket)
 venderTicketC c peli = (TicketVendido c (nuevoT peli (salaC c peli) False ) , nuevoT peli (salaC c peli) False )
 
 
 ingresarASalaC:: Cine -> Sala -> Ticket ->  (Cine, Ticket)
+
 ingresarASalaC (TicketVendido c t ) sala ticket 
-												| t == ticket = (( agregarEspectador c sala ticket) , nuevoT (peliculaT t) (salaT t) True)
+													| t == ticket = ( (agregarEspectador c sala ticket) , nuevoT (peliculaT ticket) (salaT ticket) True)
 												| otherwise = (TicketVendido (fst(ingresarASalaC c sala ticket)) t, nuevoT (peliculaT ticket) (salaT ticket) True )
 
 
 agregarEspectador:: Cine-> Sala -> Ticket -> Cine
-agregarEspectador (SalaConPelicula c s p i ) sala ticket 
-														| s== sala = SalaConPelicula c s p (i+1)
-														|otherwise = SalaConPelicula (agregarEspectador c sala ticket) s p i 
 agregarEspectador (TicketVendido c t) sala ticket = TicketVendido (agregarEspectador c sala ticket) t
+agregarEspectador (SalaConPelicula c s p i ) sala ticket 
+														| s == sala = SalaConPelicula c s p (i+1)
+														| otherwise = SalaConPelicula (agregarEspectador c sala ticket) s p i 
 
 --fijarse duplas
 pasarA3DUnaPeliculaC :: Cine -> Nombre -> (Cine, Pelicula)
+pasarA3DUnaPeliculaC (TicketVendido c t ) nombre 		| nombreP(peliculaT t) == nombre = 
+																	(TicketVendido (fst(pasarA3DUnaPeliculaC c  nombre)) (nuevoT (peli3D c nombre) (salaT t) True), peli3D c nombre)
+														| otherwise = (TicketVendido (fst(pasarA3DUnaPeliculaC c  nombre)) t, peli3D c nombre)
 pasarA3DUnaPeliculaC (SalaConPelicula c s p i ) nombre 
 														| (nombreP p ) == nombre = 
 																	(SalaConPelicula c s (peli3D (SalaConPelicula c s p i) nombre) i, peli3D (SalaConPelicula c s p i) nombre  )
 														|otherwise = ((SalaConPelicula (fst(pasarA3DUnaPeliculaC c nombre)) s p i) , peli3D (SalaConPelicula c s p i) nombre)
-pasarA3DUnaPeliculaC (TicketVendido c t ) nombre 		| nombreP(peliculaT t) == nombre = 
-																	(TicketVendido (fst(pasarA3DUnaPeliculaC c  nombre)) (nuevoT (peli3D c nombre) (salaT t) True), peli3D c nombre)
-														| otherwise = (TicketVendido (fst(pasarA3DUnaPeliculaC c  nombre)) t, peli3D c nombre)
 
 peli3D:: Cine -> Nombre -> Pelicula
+peli3D (TicketVendido c t ) nombre = peli3D c nombre
 peli3D (SalaConPelicula c s p i)  nombre 
 										| nombreP p == nombre = nuevaP nombre (generosP p) (actoresP p ) True 
 										| otherwise = peli3D c nombre
-peli3D (TicketVendido c t ) nombre = peli3D c nombre
 
 ticket4 = nuevoT peli33 4 False
 ticket5 = nuevoT peli20 3 False
