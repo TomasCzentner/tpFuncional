@@ -108,11 +108,14 @@ peliculaC (SalaConPelicula c s p i ) sala
 venderTicketC :: Cine -> Pelicula -> (Cine, Ticket)
 venderTicketC c peli = (TicketVendido c (nuevoT peli (salaC c peli) False ) , nuevoT peli (salaC c peli) False )
 
-
+--Tira error
+--Fijarse el caso SalaConPelicula(TicketVendido(...))
 ingresarASalaC:: Cine -> Sala -> Ticket ->  (Cine, Ticket)
-
+ingresarASalaC (C n) sala ticket = ((C n), ticket)
+ingresarASalaC (SalaConPelicula c s p i) sala ticket = ((SalaConPelicula (fst(ingresarASalaC c sala ticket)) s p i), 
+														nuevoT (peliculaT ticket) (salaT ticket) True )
 ingresarASalaC (TicketVendido c t ) sala ticket 
-													| t == ticket = ( (agregarEspectador c sala ticket) , nuevoT (peliculaT ticket) (salaT ticket) True)
+												| t == ticket = ( (agregarEspectador c sala ticket) , nuevoT (peliculaT ticket) (salaT ticket) True)
 												| otherwise = (TicketVendido (fst(ingresarASalaC c sala ticket)) t, nuevoT (peliculaT ticket) (salaT ticket) True )
 
 
@@ -122,7 +125,7 @@ agregarEspectador (SalaConPelicula c s p i ) sala ticket
 														| s == sala = SalaConPelicula c s p (i+1)
 														| otherwise = SalaConPelicula (agregarEspectador c sala ticket) s p i 
 
---fijarse duplas
+--Tira error
 pasarA3DUnaPeliculaC :: Cine -> Nombre -> (Cine, Pelicula)
 pasarA3DUnaPeliculaC (TicketVendido c t ) nombre 		| nombreP(peliculaT t) == nombre = 
 																	(TicketVendido (fst(pasarA3DUnaPeliculaC c  nombre)) (nuevoT (peli3D c nombre) (salaT t) True), peli3D c nombre)
@@ -149,3 +152,6 @@ c4 = SalaConPelicula c2 9 peli33 10
 c5 = TicketVendido c4 ticket4
 c6 = SalaConPelicula c2 7 peli20 80
 c7 = TicketVendido c6 ticket5
+c8 = TicketVendido c7 ticket5
+c9 = SalaConPelicula c8 8 peli20 30
+
